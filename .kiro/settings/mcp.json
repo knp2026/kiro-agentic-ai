@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "s3-documents": {
+      "command": "/opt/homebrew/opt/python@3.11/libexec/bin/python3",
+      "args": ["/Users/k.nayak.pradeep/Downloads/Kirodemo/mcp_s3_server.py"],
+      "env": {
+        "AWS_DEFAULT_REGION": "us-east-1"
+      },
+      "disabled": false,
+      "autoApprove": ["read_s3_document", "list_s3_documents"]
+    }
+  }
+}
