@@ -40,6 +40,22 @@ class ContractRecord(BaseModel):
     duration: str
 
 
+class AccountRecord(BaseModel):
+    """Domain model representing an account record from DynamoDB.
+
+    Attributes:
+        account_id: The unique identifier of the account.
+        balance: The current account balance.
+        currency: The currency code (e.g., "USD").
+        account_type: The type of account (e.g., "savings", "checking").
+    """
+
+    account_id: str
+    balance: float
+    currency: str
+    account_type: str
+
+
 class ChatResponse(BaseModel):
     """Response model for the POST /chat endpoint.
 

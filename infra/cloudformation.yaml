@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Multi-Agent Orchestrator Infrastructure
+
+Resources:
+  AccountsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Accounts
+      AttributeDefinitions:
+        - AttributeName: account_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: account_id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Project
+          Value: AIBankingAssistant
+        - Key: Feature
+          Value: MultiAgentOrchestrator
+
+  OrchestratorPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: MultiAgentOrchestratorPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AccountsTableReadAccess
+            Effect: Allow
+            Action:
+              - dynamodb:GetItem
+            Resource: arn:aws:dynamodb:us-east-1:861976376325:table/Accounts
+          - Sid: BedrockIntentClassification
+            Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+            Resource: arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0
+
+Outputs:
+  AccountsTableArn:
+    Description: ARN of the DynamoDB Accounts table
+    Value: !GetAtt AccountsTable.Arn
+
+  AccountsTableName:
+    Description: Name of the DynamoDB Accounts table
+    Value: !Ref AccountsTable
+
+  OrchestratorPolicyArn:
+    Description: ARN of the Multi-Agent Orchestrator IAM managed policy
+    Value: !Ref OrchestratorPolicy

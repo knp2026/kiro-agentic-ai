@@ -1,38 +1,85 @@
 # AI Banking Assistant
 
-A FastAPI-based chatbot that retrieves banking contract details from DynamoDB and generates AI-powered summaries using Amazon Bedrock (Claude). Implements a human-in-the-loop pattern where requests are either handled automatically or escalated to human support.
+A conversational AI system built on AWS that helps bank customers with account balance inquiries and contract lookups. Uses a **Multi-Agent Orchestrator** pattern where a central intent classifier powered by Amazon Bedrock routes user requests to specialized agents.
 
 ## Architecture
 
 ```
-Customer → POST /chat → DynamoDB (contract lookup) → Bedrock (AI summary) → Response
-                              ↓ (not found)
-                         ESCALATE → Human Agent
+Customer → POST /chat
+               │
+               ├── contract_id present? → Contract Agent → DynamoDB + Bedrock Summary
+               │
+               └── no contract_id? → Intent Classifier (Bedrock)
+                                          │
+                                          ├── "balance_inquiry" → Account Balance Agent → DynamoDB
+                                          │
+                                          └── "contract_inquiry" → Prompt for contract_id
 ```
 
-**Key components:**
+**Key Design Principles:**
+- Multi-Agent Architecture — Specialized agents handle distinct domains
+- Intent-Driven Routing — Bedrock LLM classifies user intent before dispatch
+- Least Privilege — IAM policies grant only required permissions
+- Idempotent Infrastructure — CloudFormation ensures reproducible deployments
+- Graceful Degradation — Failures escalate to human support (never crash)
 
-- `main.py` — FastAPI app with `/chat` endpoint and request orchestration
-- `dynamodb_client.py` — DynamoDB access layer for contract retrieval
-- `bedrock_client.py` — Amazon Bedrock integration for AI summary generation
-- `models.py` — Pydantic request/response schemas
-- `exceptions.py` — Custom exception classes for structured error handling
+## Project Structure
+
+```
+Kirodemo/
+├── docs/                           # Documentation & PDFs
+│   ├── architecture_overview.pdf   # High-level architecture document
+│   ├── architecture_overview.txt   # Architecture (text version)
+│   ├── Test_Guide.pdf              # Test execution guide
+│   ├── Test_Guide.txt              # Test guide (text version)
+│   ├── infrastructure_checklist.pdf# Infra provisioning checklist
+│   ├── aws_verification_checklist.pdf
+│   ├── test_execution_guide.pdf
+│   └── use_cases_human_in_the_loop.pdf
+├── infra/                          # Infrastructure as Code
+│   └── cloudformation.yaml         # DynamoDB + IAM policy stack
+├── mcp/                            # MCP Server
+│   ├── mcp_s3_server.py            # S3 document MCP server
+│   └── mcp.md                      # MCP documentation
+├── scripts/                        # Utility scripts
+│   └── demo_use_cases.py           # Live demo script
+├── tests/                          # All test files
+│   ├── test_use_cases.py           # Use Case 1 & 2 automated tests
+│   ├── test_integration_chat.py    # Full integration tests
+│   ├── test_integration_infra.py   # AWS infra integration tests
+│   ├── test_setup_infra.py         # Infra provisioning unit tests
+│   └── test_dynamodb_client.py     # DynamoDB client unit tests
+├── main.py                         # FastAPI app (POST /chat endpoint)
+├── models.py                       # Pydantic request/response schemas
+├── exceptions.py                   # Custom exception classes
+├── intent_classifier.py            # Bedrock intent classification
+├── account_balance_agent.py        # Account Balance Agent
+├── accounts_dynamodb_client.py     # Accounts DynamoDB client
+├── bedrock_client.py               # Bedrock LLM client (summaries)
+├── dynamodb_client.py              # Contracts DynamoDB client
+├── setup_infra.py                  # Infrastructure provisioning CLI
+├── requirements.txt                # Runtime dependencies
+├── requirements-dev.txt            # Test dependencies
+└── pytest.ini                      # Pytest configuration
+```
 
 ## Prerequisites
 
-- Python 3.10+
+- Python 3.9+
 - AWS account with:
-  - DynamoDB table `Contracts` in us-east-1 (partition key: `contract_id`, String)
-  - Bedrock model access for Claude Haiku 4.5 (`anthropic.claude-haiku-4-5-20251001-v1:0`)
+  - DynamoDB tables: `Accounts` and `Contracts` in us-east-1
+  - Bedrock model access for Claude Haiku (`anthropic.claude-haiku-4-5-20251001-v1:0`)
+  - IAM policy: `MultiAgentOrchestratorPolicy`
 - AWS credentials configured (default profile or environment variables)
+- AWS Account: 861976376325 | Region: us-east-1
 
 ## Setup
 
 ```bash
-# Install dependencies
+# Install runtime dependencies
 pip install -r requirements.txt
 
-# Install dev dependencies (for testing)
+# Install test dependencies
 pip install -r requirements-dev.txt
 ```
 
@@ -42,35 +89,46 @@ pip install -r requirements-dev.txt
 uvicorn main:app --port 8000
 ```
 
+## Infrastructure Provisioning
+
+Provision all AWS resources with a single command:
+
+```bash
+# Full deployment (CloudFormation + Bedrock verify + seed data + verify all)
+python setup_infra.py --action deploy
+
+# Verify existing resources (read-only)
+python setup_infra.py --action verify
+
+# Seed test data only
+python setup_infra.py --action seed
+```
+
+This deploys:
+- DynamoDB `Accounts` table (PAY_PER_REQUEST)
+- IAM `MultiAgentOrchestratorPolicy` (dynamodb:GetItem + bedrock:InvokeModel)
+- Test data: ACC-1001, ACC-1002, ACC-1003
+
 ## API Usage
 
 ### POST /chat
 
-**Request:**
+**Balance Inquiry:**
 ```json
 {
-  "message": "Show me my loan contract details",
+  "message": "What is the balance of ACC-1001?"
+}
+```
+→ Response: `"Account ACC-1001: Balance: 5250.75 USD, Type: savings"` | Status: `AUTO`
+
+**Contract Lookup:**
+```json
+{
+  "message": "Show me my loan details",
   "contract_id": "C123"
 }
 ```
-
-**Response (success — AUTO):**
-```json
-{
-  "message": "Contract C123 found and summarized successfully.",
-  "contract_summary": "• Contract amount: $50,000\n• Interest rate: 5%\n• Duration: 5 years",
-  "status": "AUTO"
-}
-```
-
-**Response (not found — ESCALATE):**
-```json
-{
-  "message": "Contract not found, escalating to support",
-  "contract_summary": null,
-  "status": "ESCALATE"
-}
-```
+→ Response: Contract summary generated by AI | Status: `AUTO`
 
 ### Status Values
 
@@ -82,43 +140,47 @@ uvicorn main:app --port 8000
 ## Running Tests
 
 ```bash
-pytest
+# Run all tests
+pytest -v
+
+# Run Use Case 1 & 2 tests only
+pytest tests/test_use_cases.py -v
+
+# Run only Use Case 1 (Account Balance)
+pytest tests/test_use_cases.py::TestUseCase1_AccountBalanceInquiry -v
+
+# Run only Use Case 2 (Contract Lookup)
+pytest tests/test_use_cases.py::TestUseCase2_ContractLookupAndSummary -v
+
+# Skip integration tests requiring live AWS
+pytest -m "not integration" -v
 ```
 
-Tests use [moto](https://github.com/getmoto/moto) to mock AWS services locally.
+Tests use [moto](https://github.com/getmoto/moto) to mock AWS services locally — no real AWS credentials needed for unit tests.
 
-## Demo
+## Use Cases
 
-Run the demo script to exercise both use cases against a live server:
-
-```bash
-# Start server first in another terminal
-uvicorn main:app --port 8000
-
-# Run demo
-python demo_use_cases.py
-```
-
-- **Use Case 1:** Valid contract → AI summary returned (AUTO)
-- **Use Case 2:** Invalid contract → Escalated to human (ESCALATE)
-
-## Project Structure
-
-```
-├── main.py                  # FastAPI app and /chat endpoint
-├── dynamodb_client.py       # DynamoDB contract retrieval
-├── bedrock_client.py        # Bedrock AI summary generation
-├── models.py                # Pydantic data models
-├── exceptions.py            # Custom exceptions
-├── demo_use_cases.py        # Live demo script
-├── test_dynamodb_client.py  # Unit tests
-├── requirements.txt         # Runtime dependencies
-└── requirements-dev.txt     # Test dependencies
-```
+| # | Use Case | Actor | Description |
+|---|----------|-------|-------------|
+| 1 | Account Balance Inquiry | Customer | Ask about account balance via natural language |
+| 2 | Contract Lookup & Summary | Customer | Provide contract_id, get AI-generated summary |
+| 3 | Intent Classification | Customer | System classifies intent when no contract_id |
+| 4 | Error Handling | Customer | Graceful escalation on any failure |
+| 5 | Infrastructure Provisioning | Developer | One-command environment setup |
 
 ## AWS Resources
 
 | Resource | Details |
 |----------|---------|
-| DynamoDB Table | `Contracts` (on-demand billing, us-east-1) |
-| Bedrock Model | `anthropic.claude-haiku-4-5-20251001-v1:0` via inference profile `us.anthropic.claude-haiku-4-5-20251001-v1:0` |
+| DynamoDB Table | `Accounts` (partition key: account_id, on-demand, us-east-1) |
+| DynamoDB Table | `Contracts` (partition key: contract_id, on-demand, us-east-1) |
+| Bedrock Model | `anthropic.claude-haiku-4-5-20251001-v1:0` |
+| IAM Policy | `MultiAgentOrchestratorPolicy` (GetItem + InvokeModel) |
+| CloudFormation | `MultiAgentOrchestratorInfra` stack |
+
+## Documentation
+
+Detailed documentation is available in the `docs/` folder:
+- **architecture_overview.pdf** — Full system architecture with diagrams and use case descriptions
+- **Test_Guide.pdf** — Step-by-step test execution instructions
+- **infrastructure_checklist.pdf** — Infrastructure provisioning verification checklist
