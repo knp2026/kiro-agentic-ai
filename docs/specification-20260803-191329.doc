@@ -1,0 +1,51 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Specification</title></head><body><pre> AI Chatbot GK Functional Specification Document (Enhanced Version)
+
+1. Overview
+This feature aims to develop an AI chatbot (GK) that can answer general awareness questions, providing a quick and efficient means for users to acquire information on various topics through a conversational interface. The chatbot will prioritize a response time limit, aiming for a maximum of 5 seconds for most questions, with a clear communication to the user for complex queries that may require a longer response time.
+
+2. User Stories
+As a student, I want to ask questions about historical events, so that I can prepare for my exams effectively.
+As a professional, I want to ask questions about the latest technological advancements, so that I can stay updated in my field.
+As a general user, I want to ask questions about general knowledge trivia, so that I can engage in fun conversations and expand my knowledge.
+
+3. Functional Requirements (Updated)
+SHALL be able to understand and respond to a wide range of general awareness questions within a 5-second response time for most questions, clearly communicating a longer response time for complex queries.
+SHOULD provide accurate, reliable, and up-to-date information.
+SHOULD have the ability to learn from user interactions to improve its response quality.
+MAY offer multiple response options for ambiguous questions.
+MAY provide links to external resources for more detailed information.
+
+4. User Workflows
+User initiates a conversation with the chatbot.
+User asks a general awareness question.
+Chatbot processes the question and retrieves the answer within the specified response time.
+If the question is complex, the chatbot communicates the longer response time and continues to process the question.
+Chatbot responds with the answer to the user's question.
+User has the option to ask follow-up questions or end the conversation.
+
+5. UI/UX Considerations (Updated)
+The chatbot interface should be user-friendly and easy to navigate.
+The chatbot should support text-based interactions.
+The chatbot should have a conversational tone to enhance user engagement.
+The chatbot should provide visual indicators for processing user requests, including a loading icon or message.
+
+6. Data Requirements (Updated)
+Input data: General awareness questions from users.
+Output data: Accurate and reliable answers to the questions, delivered within the specified response time.
+Storage: The chatbot should store user interactions to improve its response quality.
+Format: Data should be stored in a structured format (e.g., JSON, XML) for easy analysis.
+
+7. Integration Points (Updated)
+External APIs: Knowledge base APIs for retrieving information, prioritizing speed and reliability.
+External APIs: Link shortening APIs for providing links to external resources.
+
+8. Constraints and Assumptions (Updated)
+The chatbot may not be able to answer all questions due to the vastness of general knowledge.
+The chatbot's response quality may vary depending on the quality and quantity of user interactions.
+The chatbot's response time may be affected by the complexity of the question and the availability of information.
+
+9. Open Questions (Updated)
+How can we ensure the chatbot's answers are accurate, reliable, and up-to-date? This can be addressed by integrating multiple reliable knowledge base APIs, regularly updating the chatbot's database, and implementing a mechanism for users to report inaccuracies.
+How can we implement the chatbot's ability to learn from user interactions to improve its response quality? This can be achieved by analyzing user interactions, identifying patterns, and adjusting the chatbot's responses accordingly.
+What are the specific knowledge base APIs to be integrated for information retrieval? This will depend on the desired areas of focus and the availability of reliable APIs.
+How can we implement the chatbot's ability to provide multiple response options for ambiguous questions? This can be achieved by implementing a scoring system for potential answers, selecting the highest-scoring answer as the primary response, and providing lower-scoring options as alternatives.</pre></body></html>
