@@ -1,0 +1,77 @@
+
+
+### FILE: README.md
+### LANGUAGE: Markdown
+
+# AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) System
+
+Welcome to the documentation for the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) system. This project aims to provide an efficient and seamless user experience for bank customers to access their contract information using natural language interaction.
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Architecture](#architecture)
+- [Components](#components)
+- [Data Models](#data-models)
+- [Interfaces](#interfaces)
+- [API Specifications](#api-specifications)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Introduction
+
+This section provides an overview of the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) system, its design philosophy, and the technologies used in its implementation.
+
+## Architecture
+
+The system architecture is primarily based on a microservices-oriented approach, with each distinct functionality encapsulated within its own service. This design enables independent development, deployment, and scaling of services, promoting a more agile and adaptable system.
+
+For more details, refer to the [Architecture](ARCHITECTURE.md) document.
+
+## Components
+
+The system is composed of several components, each responsible for a specific functionality. The following sections provide an overview of the key components and their responsibilities.
+
+- [User Interface (UI) Component](components/ui.md)
+- [Authentication Component](components/authentication.md)
+- [Contract Information Retrieval Service (CIRS)](components/cirs.md)
+- [Contract Summarization Service (CSS)](components/css.md)
+- [Session Management Service (SMS)](components/sms.md)
+- [Human-in-the-Loop (HITL) Service](components/hitl.md)
+- [Audit and Compliance Service (ACS)](components/acs.md)
+
+## Data Models
+
+In this section, we will outline the primary data entities, their relationships, and the corresponding data schemas for the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) project.
+
+- [Customer Entity](data_models/customer.md)
+- [Account Entity](data_models/account.md)
+- [Contract Entity](data_models/contract.md)
+
+## Interfaces
+
+In this section, we will outline the various interfaces that will comprise the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) solution. These interfaces will facilitate communication between the system components, ensuring seamless data flow and secure interaction.
+
+- [Customer Authentication API](interfaces/authentication.md)
+- [Customer Verification API](interfaces/verification.md)
+- [Contract Information Retrieval API](interfaces/cir.md)
+- [Contract Summarization API](interfaces/cs.md)
+- [Session Management API](interfaces/sm.md)
+- [Human-in-the-Loop API](interfaces/hitl.md)
+- [Audit and Compliance API](interfaces/ac.md)
+
+## API Specifications
+
+In this section, we will outline the API specifications for the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) project. The API will employ RESTful architecture, and all endpoints will be accessible over HTTPS.
+
+- [Customer Authentication and Verification](api_specifications/auth.md)
+- [Contract Information Retrieval](api_specifications/cir.md)
+- [Contract Summarization](api_specifications/cs.md)
+- [Session Management](api_specifications/sm.md)
+- [Human-in-the-Loop](api_specifications/hitl.md)
+- [Audit and Compliance](api_specifications/ac.md)
+
+## Getting Started
+
+To get started with the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) system, follow the instructions in the [Getting Started](
