@@ -1,18 +1,25 @@
 
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
-from auth.keycloak_auth import authenticate_user, verify_user
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+from keycloak import KeycloakOpenID
 
-router = APIRouter()
+app = FastAPI()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-@router.post("/authenticate")
+keycloak_openid = KeycloakOpenID(server_url="http://keycloak:8080/",
+                                  client_id="banking-service",
+                                  realm_name="banking",
+                                  client_secret_key="secret")
+
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+
+@app.post("/auth/authenticate", response_model=Token)
 async def authenticate(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(status_code=400, detail="Invalid username or password")
-    return {"access_token": user.access_token}
-
-@router.post("/verify")
-async def verify(customer_id: str, current_user: dict = Depends(verify_user)):
-    # Implementation for customer verification
-    return {"verified": True}
+    try:
+        token = keycloak_openid.token(form_data.username, form_data.password)
+        return {"access_token": token['access_token'], "refresh_token": token['refresh_token']}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
