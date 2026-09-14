@@ -1,14 +1,16 @@
 
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
-from service.authentication import get_current_user, TokenData
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer
+from database import get_db
+from models import Account, Contract
 
-app = FastAPI()
+router = APIRouter()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/authenticate")
 
-class ContractRequest(BaseModel):
-    account_id: str
-
-@app.post("/contracts")
-async def retrieve_contracts(request: ContractRequest, current_user: TokenData = Depends(get_current_user)):
-    # Implementation for contract retrieval
-    return {"contracts": []}
+@router.get("/contracts/{account_id}")
+async def get_contracts(account_id: str, db = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    account = db.query(Account).filter(Account.AccountID == account_id).first()
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+    contracts = db.query(Contract).filter(Contract.AccountID == account_id).all()
+    return {"contracts": [contract.dict() for contract in contracts]}
