@@ -5,7 +5,7 @@ info:
 paths:
   /auth/authenticate:
     post:
-      summary: Authenticate a customer and verify their identity
+      summary: Authenticate a customer
       requestBody:
         required: true
         content:
@@ -19,6 +19,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthenticationResponse'
+  /auth/verify:
+    post:
+      summary: Verify a customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+      responses:
+        '200':
+          description: Successful verification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResponse'
 components:
   schemas:
     AuthenticationRequest:
@@ -33,3 +49,13 @@ components:
       properties:
         access_token:
           type: string
+    VerificationRequest:
+      type: object
+      properties:
+        customer_id:
+          type: string
+    VerificationResponse:
+      type: object
+      properties:
+        verified:
+          type: boolean
