@@ -1,17 +1,17 @@
 
--- Create Customer table
+-- Create the Customer table
 CREATE TABLE Customer (
     CustomerID SERIAL PRIMARY KEY,
     FirstName VARCHAR(50) NOT NULL,
     LastName VARCHAR(50) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
-    PhoneNumber VARCHAR(20) NOT NULL,
+    PhoneNumber VARCHAR(20) UNIQUE NOT NULL,
     DateOfBirth DATE NOT NULL,
     AuthenticationToken TEXT,
-    VerifiedStatus BOOLEAN DEFAULT FALSE
+    VerifiedStatus BOOLEAN NOT NULL DEFAULT FALSE
 );
 
--- Create Account table
+-- Create the Account table
 CREATE TABLE Account (
     AccountID SERIAL PRIMARY KEY,
     CustomerID INTEGER REFERENCES Customer(CustomerID),
@@ -19,10 +19,10 @@ CREATE TABLE Account (
     AccountNumber VARCHAR(50) UNIQUE NOT NULL
 );
 
--- Create Contract table
+-- Create the Contract table
 CREATE TABLE Contract (
     ContractID SERIAL PRIMARY KEY,
     AccountID INTEGER REFERENCES Account(AccountID),
     ContractType VARCHAR(50) NOT NULL,
-    ContractData TEXT NOT NULL
+    ContractData JSONB NOT NULL
 );
