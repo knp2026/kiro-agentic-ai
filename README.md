@@ -1,55 +1,52 @@
-# AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL)
 
-This repository contains the source code for the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) project. The project aims to provide an efficient and seamless user experience for bank customers to access and understand their contract information using natural language interaction.
+# AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) System
 
-## Technology Stack
+Welcome to the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) System. This project aims to provide a secure, scalable, and customer-centric solution for efficient and seamless contract information retrieval.
 
-- Language: Python
-- Framework: FastAPI
-- Database: PostgreSQL
-- Auth: Keycloak
-- AsyncProcessing: Apache Kafka
-- Container: Docker
-- Cloud: Amazon Web Services (AWS)
-- IaC: Terraform
-- Testing: Pytest with Coverage
-- Documentation: Sphinx
-- SourceControl: GitLab
+## Table of Contents
 
-## Project Structure
+- [Technology Choices](#technology-choices)
+- [System Architecture](#system-architecture)
+- [Data Models](#data-models)
+- [APIs](#apis)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
+- [License](#license)
 
-```
-ai-banking-contract-retrieval/
-|-- app/
-| |-- api/
-| | |-- controllers/
-| | |-- models/
-| | |-- services/
-| |-- chatbot/
-| | |-- intents/
-| | |-- nlu/
-| | |-- responses/
-| |-- infrastructure/
-| | |-- databases/
-| | |-- mail/
-| | |-- notifications/
-| |-- utils/
-|-- tests/
-| |-- unit/
-| |-- integration/
-|-- .gitignore
-|-- README.md
-|-- requirements.txt
-```
+## Technology Choices
+
+- **Language:** Python
+- **Framework:** FastAPI
+- **Database:** PostgreSQL
+- **Authentication:** Keycloak
+- **AsyncProcessing:** Apache Kafka
+- **Container:** Docker
+- **Cloud:** Amazon Web Services (AWS)
+- **IaC:** Terraform
+- **Testing:** Pytest and Coverage
+- **Documentation:** Sphinx
+- **Source Control:** GitLab
+
+## System Architecture
+
+For a detailed explanation of the system architecture, please refer to the [System Architecture Document](docs/system_architecture.md).
+
+## Data Models
+
+For a detailed explanation of the data models, please refer to the [Data Models Document](docs/data_models.md).
+
+## APIs
+
+For a detailed explanation of the APIs, please refer to the [API Documentation](docs/api.md).
 
 ## Getting Started
 
-1. Clone the repository: `git clone https://gitlab.com/your-organization/ai-banking-contract-retrieval.git`
-2. Set up the development environment (see [Development Workflow](docs/development-workflow.md))
-3. Install dependencies: `pip install -r requirements.txt`
-4. Run tests: `pytest`
-5. Start the application: `uvicorn app.main:app --reload`
+To get started with the project, please follow the instructions in the [Getting Started Guide](docs/getting_started.md).
 
-## Documentation
+## Contributing
 
-For detailed documentation, refer to the [Documentation](docs/) directory.
+We welcome contributions to the project. Please follow the guidelines in the [Contributing Guide](docs/contributing.md).
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
