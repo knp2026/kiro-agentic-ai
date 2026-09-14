@@ -1,9 +1,8 @@
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, Field
 
 class Account(BaseModel):
-    AccountID: int
-    CustomerID: int
-    AccountType: str
-    AccountNumber: str
-    Contracts: List[int]
+    account_id: str = Field(..., alias='AccountID')
+    customer_id: str = Field(..., alias='CustomerID')
+    account_type: str = Field(..., alias='AccountType')
+    account_number: str = Field(..., alias='AccountNumber')
+    contracts: list[str] = Field(..., alias='Contracts')
