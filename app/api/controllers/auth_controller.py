@@ -1,7 +1,7 @@
-
+```python
 from fastapi import APIRouter, Depends, HTTPException
-from app.api.models import AuthRequest, AuthResponse
 from app.api.services import auth_service
+from app.api.models import AuthRequest, AuthResponse
 
 router = APIRouter()
 
@@ -12,3 +12,4 @@ async def authenticate(request: AuthRequest):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     access_token = auth_service.generate_access_token(user)
     return AuthResponse(access_token=access_token)
+```
