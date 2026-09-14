@@ -1,14 +1,13 @@
 
 from fastapi import APIRouter, Depends, HTTPException
-from app.api.models import AuthRequest, AuthResponse
+from app.api.models import UserCredentials
 from app.api.services import auth_service
 
 router = APIRouter()
 
-@router.post("/authenticate", response_model=AuthResponse)
-async def authenticate(request: AuthRequest):
-    user = await auth_service.authenticate_user(request.username, request.password)
-    if not user:
+@router.post("/authenticate")
+async def authenticate(user_credentials: UserCredentials):
+    access_token = await auth_service.authenticate(user_credentials)
+    if not access_token:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    access_token = auth_service.generate_access_token(user)
-    return AuthResponse(access_token=access_token)
+    return {"access_token": access_token}
