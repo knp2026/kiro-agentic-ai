@@ -1,14 +1,18 @@
 
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
-from service.authentication import get_current_user, TokenData
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer
+from database import get_db
+from models import Customer
 
-app = FastAPI()
+router = APIRouter()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/authenticate")
 
-class VerificationRequest(BaseModel):
-    customer_id: str
-
-@app.post("/verify")
-async def verify_customer(request: VerificationRequest, current_user: TokenData = Depends(get_current_user)):
-    # Implementation for customer verification
-    return {"verified": True}
+@router.post("/verify")
+async def verify_customer(customer_id: str, db = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    customer = db.query(Customer).filter(Customer.CustomerID == customer_id).first()
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    if customer.VerifiedStatus:
+        return {"verified": True}
+    else:
+        return {"verified": False}
