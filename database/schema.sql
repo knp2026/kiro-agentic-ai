@@ -5,7 +5,7 @@ CREATE TABLE Customer (
     FirstName VARCHAR(50) NOT NULL,
     LastName VARCHAR(50) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
-    PhoneNumber VARCHAR(20) NOT NULL,
+    PhoneNumber VARCHAR(20) UNIQUE NOT NULL,
     DateOfBirth DATE NOT NULL,
     AuthenticationToken TEXT,
     VerifiedStatus BOOLEAN DEFAULT FALSE
@@ -24,5 +24,5 @@ CREATE TABLE Contract (
     ContractID SERIAL PRIMARY KEY,
     AccountID INTEGER REFERENCES Account(AccountID),
     ContractType VARCHAR(50) NOT NULL,
-    ContractData TEXT NOT NULL
+    ContractData JSONB NOT NULL
 );
