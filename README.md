@@ -1,186 +1,55 @@
-# AI Banking Assistant
+# AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL)
 
-A conversational AI system built on AWS that helps bank customers with account balance inquiries and contract lookups. Uses a **Multi-Agent Orchestrator** pattern where a central intent classifier powered by Amazon Bedrock routes user requests to specialized agents.
+This repository contains the source code for the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) project. The project aims to provide an efficient and seamless user experience for bank customers to access and understand their contract information using natural language interaction.
 
-## Architecture
+## Technology Stack
 
-```
-Customer → POST /chat
-               │
-               ├── contract_id present? → Contract Agent → DynamoDB + Bedrock Summary
-               │
-               └── no contract_id? → Intent Classifier (Bedrock)
-                                          │
-                                          ├── "balance_inquiry" → Account Balance Agent → DynamoDB
-                                          │
-                                          └── "contract_inquiry" → Prompt for contract_id
-```
-
-**Key Design Principles:**
-- Multi-Agent Architecture — Specialized agents handle distinct domains
-- Intent-Driven Routing — Bedrock LLM classifies user intent before dispatch
-- Least Privilege — IAM policies grant only required permissions
-- Idempotent Infrastructure — CloudFormation ensures reproducible deployments
-- Graceful Degradation — Failures escalate to human support (never crash)
+- Language: Python
+- Framework: FastAPI
+- Database: PostgreSQL
+- Auth: Keycloak
+- AsyncProcessing: Apache Kafka
+- Container: Docker
+- Cloud: Amazon Web Services (AWS)
+- IaC: Terraform
+- Testing: Pytest with Coverage
+- Documentation: Sphinx
+- SourceControl: GitLab
 
 ## Project Structure
 
 ```
-Kirodemo/
-├── docs/                           # Documentation & PDFs
-│   ├── architecture_overview.pdf   # High-level architecture document
-│   ├── architecture_overview.txt   # Architecture (text version)
-│   ├── Test_Guide.pdf              # Test execution guide
-│   ├── Test_Guide.txt              # Test guide (text version)
-│   ├── infrastructure_checklist.pdf# Infra provisioning checklist
-│   ├── aws_verification_checklist.pdf
-│   ├── test_execution_guide.pdf
-│   └── use_cases_human_in_the_loop.pdf
-├── infra/                          # Infrastructure as Code
-│   └── cloudformation.yaml         # DynamoDB + IAM policy stack
-├── mcp/                            # MCP Server
-│   ├── mcp_s3_server.py            # S3 document MCP server
-│   └── mcp.md                      # MCP documentation
-├── scripts/                        # Utility scripts
-│   └── demo_use_cases.py           # Live demo script
-├── tests/                          # All test files
-│   ├── test_use_cases.py           # Use Case 1 & 2 automated tests
-│   ├── test_integration_chat.py    # Full integration tests
-│   ├── test_integration_infra.py   # AWS infra integration tests
-│   ├── test_setup_infra.py         # Infra provisioning unit tests
-│   └── test_dynamodb_client.py     # DynamoDB client unit tests
-├── main.py                         # FastAPI app (POST /chat endpoint)
-├── models.py                       # Pydantic request/response schemas
-├── exceptions.py                   # Custom exception classes
-├── intent_classifier.py            # Bedrock intent classification
-├── account_balance_agent.py        # Account Balance Agent
-├── accounts_dynamodb_client.py     # Accounts DynamoDB client
-├── bedrock_client.py               # Bedrock LLM client (summaries)
-├── dynamodb_client.py              # Contracts DynamoDB client
-├── setup_infra.py                  # Infrastructure provisioning CLI
-├── requirements.txt                # Runtime dependencies
-├── requirements-dev.txt            # Test dependencies
-└── pytest.ini                      # Pytest configuration
+ai-banking-contract-retrieval/
+|-- app/
+| |-- api/
+| | |-- controllers/
+| | |-- models/
+| | |-- services/
+| |-- chatbot/
+| | |-- intents/
+| | |-- nlu/
+| | |-- responses/
+| |-- infrastructure/
+| | |-- databases/
+| | |-- mail/
+| | |-- notifications/
+| |-- utils/
+|-- tests/
+| |-- unit/
+| |-- integration/
+|-- .gitignore
+|-- README.md
+|-- requirements.txt
 ```
 
-## Prerequisites
+## Getting Started
 
-- Python 3.9+
-- AWS account with:
-  - DynamoDB tables: `Accounts` and `Contracts` in us-east-1
-  - Bedrock model access for Claude Haiku (`anthropic.claude-haiku-4-5-20251001-v1:0`)
-  - IAM policy: `MultiAgentOrchestratorPolicy`
-- AWS credentials configured (default profile or environment variables)
-- AWS Account: 861976376325 | Region: us-east-1
-
-## Setup
-
-```bash
-# Install runtime dependencies
-pip install -r requirements.txt
-
-# Install test dependencies
-pip install -r requirements-dev.txt
-```
-
-## Running the Server
-
-```bash
-uvicorn main:app --port 8000
-```
-
-## Infrastructure Provisioning
-
-Provision all AWS resources with a single command:
-
-```bash
-# Full deployment (CloudFormation + Bedrock verify + seed data + verify all)
-python setup_infra.py --action deploy
-
-# Verify existing resources (read-only)
-python setup_infra.py --action verify
-
-# Seed test data only
-python setup_infra.py --action seed
-```
-
-This deploys:
-- DynamoDB `Accounts` table (PAY_PER_REQUEST)
-- IAM `MultiAgentOrchestratorPolicy` (dynamodb:GetItem + bedrock:InvokeModel)
-- Test data: ACC-1001, ACC-1002, ACC-1003
-
-## API Usage
-
-### POST /chat
-
-**Balance Inquiry:**
-```json
-{
-  "message": "What is the balance of ACC-1001?"
-}
-```
-→ Response: `"Account ACC-1001: Balance: 5250.75 USD, Type: savings"` | Status: `AUTO`
-
-**Contract Lookup:**
-```json
-{
-  "message": "Show me my loan details",
-  "contract_id": "C123"
-}
-```
-→ Response: Contract summary generated by AI | Status: `AUTO`
-
-### Status Values
-
-| Status | Meaning |
-|--------|---------|
-| `AUTO` | Request handled automatically by AI |
-| `ESCALATE` | Requires human agent intervention |
-
-## Running Tests
-
-```bash
-# Run all tests
-pytest -v
-
-# Run Use Case 1 & 2 tests only
-pytest tests/test_use_cases.py -v
-
-# Run only Use Case 1 (Account Balance)
-pytest tests/test_use_cases.py::TestUseCase1_AccountBalanceInquiry -v
-
-# Run only Use Case 2 (Contract Lookup)
-pytest tests/test_use_cases.py::TestUseCase2_ContractLookupAndSummary -v
-
-# Skip integration tests requiring live AWS
-pytest -m "not integration" -v
-```
-
-Tests use [moto](https://github.com/getmoto/moto) to mock AWS services locally — no real AWS credentials needed for unit tests.
-
-## Use Cases
-
-| # | Use Case | Actor | Description |
-|---|----------|-------|-------------|
-| 1 | Account Balance Inquiry | Customer | Ask about account balance via natural language |
-| 2 | Contract Lookup & Summary | Customer | Provide contract_id, get AI-generated summary |
-| 3 | Intent Classification | Customer | System classifies intent when no contract_id |
-| 4 | Error Handling | Customer | Graceful escalation on any failure |
-| 5 | Infrastructure Provisioning | Developer | One-command environment setup |
-
-## AWS Resources
-
-| Resource | Details |
-|----------|---------|
-| DynamoDB Table | `Accounts` (partition key: account_id, on-demand, us-east-1) |
-| DynamoDB Table | `Contracts` (partition key: contract_id, on-demand, us-east-1) |
-| Bedrock Model | `anthropic.claude-haiku-4-5-20251001-v1:0` |
-| IAM Policy | `MultiAgentOrchestratorPolicy` (GetItem + InvokeModel) |
-| CloudFormation | `MultiAgentOrchestratorInfra` stack |
+1. Clone the repository: `git clone https://gitlab.com/your-organization/ai-banking-contract-retrieval.git`
+2. Set up the development environment (see [Development Workflow](docs/development-workflow.md))
+3. Install dependencies: `pip install -r requirements.txt`
+4. Run tests: `pytest`
+5. Start the application: `uvicorn app.main:app --reload`
 
 ## Documentation
 
-Detailed documentation is available in the `docs/` folder:
-- **architecture_overview.pdf** — Full system architecture with diagrams and use case descriptions
-- **Test_Guide.pdf** — Step-by-step test execution instructions
-- **infrastructure_checklist.pdf** — Infrastructure provisioning verification checklist
+For detailed documentation, refer to the [Documentation](docs/) directory.
