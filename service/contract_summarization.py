@@ -1,14 +1,13 @@
 
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
-from service.authentication import get_current_user, TokenData
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer
+from transformers import pipeline
 
-app = FastAPI()
+router = APIRouter()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/authenticate")
+summarizer = pipeline("summarization")
 
-class SummarizationRequest(BaseModel):
-    contract_id: str
-
-@app.post("/summarize")
-async def summarize_contract(request: SummarizationRequest, current_user: TokenData = Depends(get_current_user)):
-    # Implementation for contract summarization
-    return {"summary": ""}
+@router.post("/summarize")
+async def summarize_contract(contract_text: str, token: str = Depends(oauth2_scheme)):
+    summary = summarizer(contract_text, max_length=130, min_length=30, do_sample=False)
+    return {"summary": summary[0]["summary_text"]}
