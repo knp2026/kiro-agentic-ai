@@ -3,15 +3,18 @@ import pytest
 from fastapi.testclient import TestClient
 from main import app
 
-client = TestClient(app)
+@pytest.fixture
+def client():
+    with TestClient(app) as client:
+        yield client
 
-def test_customer_verification_api():
-    # Authenticate to get access token
-    auth_response = client.post(
+def test_customer_verification_api(client):
+    # Authenticate user
+    response = client.post(
         "/auth/authenticate",
         json={"username": "test_user", "password": "test_password"}
     )
-    access_token = auth_response.json()["access_token"]
+    access_token = response.json()["access_token"]
 
     # Test successful verification
     response = client.post(
