@@ -1,4 +1,4 @@
-
+```python
 from pydantic import BaseModel
 
 class AuthRequest(BaseModel):
@@ -7,3 +7,4 @@ class AuthRequest(BaseModel):
 
 class AuthResponse(BaseModel):
     access_token: str
+```
