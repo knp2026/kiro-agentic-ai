@@ -1,7 +1,7 @@
 
 # Project Structure
 
-This document outlines the project structure for the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) project. The project is built using Python, FastAPI, PostgreSQL, Keycloak, Apache Kafka, Docker, AWS, Terraform, Pytest, Sphinx, and GitHub.
+This document outlines the structure of the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) project.
 
 ```
 ai-banking-contract-retrieval/
@@ -27,27 +27,16 @@ ai-banking-contract-retrieval/
 |-- requirements.txt
 |-- Dockerfile
 |-- docker-compose.yml
-|-- main.tf
-|-- variables.tf
-|-- outputs.tf
-|-- Makefile
+|-- terraform/
+| |-- main.tf
+| |-- variables.tf
 |-- docs/
-| |-- source/
-| |-- build/
+| |-- architecture.md
+| |-- design.md
+| |-- api.md
+| |-- runbook.md
+| |-- adr/
 |-- scripts/
 | |-- setup.sh
-| |-- start.sh
-| |-- stop.sh
-|-- terraform/
-| |-- modules/
-| |-- environments/
-|-- k8s/
-| |-- deployments/
-| |-- services/
-| |-- ingress/
-|-- .env
-|-- .env.example
-|-- .env.test
-|-- .env.production
-|-- .env.staging
+|-- Makefile
 ```
