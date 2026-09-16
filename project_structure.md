@@ -1,42 +1,45 @@
-
 # Project Structure
 
-This document outlines the structure of the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) project.
+This document outlines the project structure for the Patient Health Care System (PHCS), a comprehensive solution designed to automate patient onboarding, facilitate collaboration among healthcare partners, and support patient registration, consent capture, and lifecycle tracking. The project structure is organized into modules based on functional areas, with each module containing packages for services, repositories, controllers, and utilities.
 
 ```
-ai-banking-contract-retrieval/
-|-- app/
-| |-- api/
-| | |-- controllers/
-| | |-- models/
-| | |-- services/
-| |-- chatbot/
-| | |-- intents/
-| | |-- nlu/
-| | |-- responses/
-| |-- infrastructure/
-| | |-- databases/
-| | |-- mail/
-| | |-- notifications/
-| |-- utils/
+patient_health_care_system/
+|-- patient_registration/
+|   |-- services/
+|   |-- repositories/
+|   |-- controllers/
+|   |-- utils/
+|-- consent_management/
+|   |-- services/
+|   |-- repositories/
+|   |-- controllers/
+|   |-- utils/
+|-- appointment_scheduling/
+|   |-- services/
+|   |-- repositories/
+|   |-- controllers/
+|   |-- utils/
+|-- integration/
+|   |-- services/
+|   |-- repositories/
+|   |-- controllers/
+|   |-- utils/
+|-- reporting/
+|   |-- services/
+|   |-- repositories/
+|   |-- controllers/
+|   |-- utils/
+|-- common/
+|   |-- exceptions/
+|   |-- interceptors/
+|   |-- validators/
+|   |-- utils/
+|-- config/
+|-- docs/
+|-- scripts/
 |-- tests/
-| |-- unit/
-| |-- integration/
-|-- .gitignore
-|-- README.md
-|-- requirements.txt
 |-- Dockerfile
 |-- docker-compose.yml
-|-- terraform/
-| |-- main.tf
-| |-- variables.tf
-|-- docs/
-| |-- architecture.md
-| |-- design.md
-| |-- api.md
-| |-- runbook.md
-| |-- adr/
-|-- scripts/
-| |-- setup.sh
-|-- Makefile
+|-- requirements.txt
+|-- README.md
 ```
