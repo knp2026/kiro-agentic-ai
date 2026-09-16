@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from models.contract import Contract
 from schemas.contract import ContractCreate
 
-def get_contract(db: Session, contract_id: int):
+def get_contract_by_id(db: Session, contract_id: int):
     return db.query(Contract).filter(Contract.ContractID == contract_id).first()
 
 def get_contracts_by_account_id(db: Session, account_id: int):
