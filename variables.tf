@@ -1,24 +1,31 @@
 
+# Define input variables for the Terraform configuration
 variable "aws_region" {
   description = "The AWS region to deploy resources in"
   type        = string
   default     = "us-west-2"
 }
 
-variable "vpc_cidr_block" {
-  description = "The CIDR block for the VPC"
+variable "db_username" {
+  description = "The username for the database"
   type        = string
-  default     = "10.0.0.0/16"
+  default     = "admin"
 }
 
-variable "public_subnet_cidr_block" {
-  description = "The CIDR block for the public subnet"
+variable "db_password" {
+  description = "The password for the database"
   type        = string
-  default     = "10.0.1.0/24"
+  sensitive   = true
 }
 
-variable "private_subnet_cidr_block" {
-  description = "The CIDR block for the private subnet"
+variable "message_broker_username" {
+  description = "The username for the message broker"
   type        = string
-  default     = "10.0.2.0/24"
+  default     = "admin"
+}
+
+variable "message_broker_password" {
+  description = "The password for the message broker"
+  type        = string
+  sensitive   = true
 }
