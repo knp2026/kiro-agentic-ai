@@ -19,9 +19,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthenticationResponse'
-  /auth/verify:
+  /verify:
     post:
-      summary: Verify a customer
+      summary: Verify a customer's identity
+      security:
+        - OAuth2: [read]
       requestBody:
         required: true
         content:
@@ -59,3 +61,11 @@ components:
       properties:
         verified:
           type: boolean
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: /auth/authenticate
+          scopes:
+            read: Grants read access
