@@ -1,7 +1,14 @@
 
 fastapi
 uvicorn[standard]
-SQLAlchemy
 psycopg2-binary
-python-jose[cryptography]
-passlib[bcrypt]
+PyJWT
+Authlib
+celery
+redis
+docker
+docker-compose
+pytest
+pytest-asyncio
+sphinx
+sphinx_rtd_theme
