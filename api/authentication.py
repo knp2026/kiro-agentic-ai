@@ -1,18 +1,16 @@
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from auth.keycloak_auth import authenticate_user, create_access_token
+from database import get_db
+from models import Customer
+from auth import authenticate_customer, create_access_token
 
 router = APIRouter()
 
 @router.post("/authenticate")
-async def authenticate(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token = create_access_token(user)
-    return {"access_token": access_token}
+async def authenticate(form_data: OAuth2PasswordRequestForm = Depends(), db=Depends(get_db)):
+    customer = await authenticate_customer(db, form_data.username, form_data.password)
+    if not customer:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    access_token = create_access_token(data={"sub": customer.username})
+    return {"access_token": access_token, "token_type": "bearer"}
