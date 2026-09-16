@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from models.account import Account
 from schemas.account import AccountCreate
 
-def get_account(db: Session, account_id: int):
+def get_account_by_id(db: Session, account_id: int):
     return db.query(Account).filter(Account.AccountID == account_id).first()
 
 def get_accounts_by_customer_id(db: Session, customer_id: int):
