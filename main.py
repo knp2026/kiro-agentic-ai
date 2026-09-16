@@ -1,11 +1,16 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from routers import auth, contracts
 
 app = FastAPI()
 
-# Import and include routers for each component
-from routers import auth, verify, contract_retrieval, summarization
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
-app.include_router(verify.router, prefix="/verify", tags=["Verification"])
-app.include_router(contract_retrieval.router, prefix="/contracts", tags=["Contract Retrieval"])
-app.include_router(summarization.router, prefix="/summarize", tags=["Summarization"])
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(contracts.router, prefix="/contracts", tags=["contracts"])
