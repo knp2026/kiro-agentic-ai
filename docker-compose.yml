@@ -1,56 +1,33 @@
+
 version: '3.8'
 
 services:
-  fastapi:
+  app:
     build: .
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
-    volumes:
-      - .:/app
     ports:
-      - 8000:8000
-    depends_on:
-      - postgres
-      - keycloak
-      - kafka
+      - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/banking
-      - KEYCLOAK_URL=http://keycloak:8080
-      - KAFKA_URL=kafka:9092
+      - DATABASE_URL=postgresql://db:5432/app
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      - db
+      - kafka
 
-  postgres:
+  db:
     image: postgres:13
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=banking
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:15.0.2
-    environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    command:
-      - start-dev
-    ports:
-      - 8080:8080
+      - POSTGRES_DB=app
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=app
 
   kafka:
-    image: confluentinc/cp-kafka:6.2.0
+    image: wurstmeister/kafka:2.13-2.7.0
     environment:
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+      - KAFKA_ADVERTISED_PORT=9092
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
     depends_on:
       - zookeeper
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:6.2.0
-    environment:
-      - ZOOKEEPER_CLIENT_PORT=2181
-
-volumes:
-  postgres_data:
+    image: wurstmeister/zookeeper:3.4.6
