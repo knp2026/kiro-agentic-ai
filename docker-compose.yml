@@ -4,30 +4,37 @@ version: '3.8'
 services:
   app:
     build: .
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/app
     ports:
-      - "8000:8000"
+      - 8000:8000
     environment:
-      - DATABASE_URL=postgresql://db:5432/app
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - DATABASE_URL=postgresql://postgres:postgres@db/postgres
     depends_on:
       - db
-      - kafka
 
   db:
-    image: postgres:13
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=app
-      - POSTGRES_USER=app
-      - POSTGRES_PASSWORD=app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
 
-  kafka:
-    image: wurstmeister/kafka:2.13-2.7.0
+  redis:
+    image: redis:6-alpine
+
+  celery:
+    build: .
+    command: celery -A main.celery worker --loglevel=info
+    volumes:
+      - .:/app
     environment:
-      - KAFKA_ADVERTISED_HOST_NAME=kafka
-      - KAFKA_ADVERTISED_PORT=9092
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - DATABASE_URL=postgresql://postgres:postgres@db/postgres
     depends_on:
-      - zookeeper
+      - db
+      - redis
 
-  zookeeper:
-    image: wurstmeister/zookeeper:3.4.6
+volumes:
+  postgres_data:
