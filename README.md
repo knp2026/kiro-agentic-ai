@@ -1,47 +1,60 @@
 
-# AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) System
+# Patient Health Care System (PHCS)
 
-Welcome to the AI-Driven Banking Contract Retrieval with Human-in-the-Loop (HITL) System. This project aims to provide an efficient and seamless user experience for bank customers to access their contract information using a conversational interface.
+Welcome to the Patient Health Care System (PHCS)! This document provides an overview of the project, including its technology stack, architecture, and design philosophy.
 
 ## Table of Contents
 
-- [Technology Choices](#technology-choices)
-- [System Architecture](#system-architecture)
-- [Getting Started](#getting-started)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [License](#license)
+1. [Introduction](#introduction)
+2. [Technology Stack](#technology-stack)
+3. [Architecture](#architecture)
+4. [Design Philosophy](#design-philosophy)
+5. [Getting Started](#getting-started)
+6. [Contributing](#contributing)
+7. [License](#license)
 
-## Technology Choices
+## Introduction
 
-- **Language**: Python
-- **Framework**: FastAPI
-- **Database**: PostgreSQL
-- **Authentication**: JWT + OAuth2
-- **AsyncProcessing**: Apache Kafka
-- **Container**: Docker
-- **Cloud**: AWS
-- **IaC**: Terraform
-- **Testing**: Pytest with Coverage
-- **Documentation**: Sphinx
-- **Source Control**: GitHub
+The Patient Health Care System (PHCS) is a comprehensive solution designed to automate the patient onboarding process, facilitate collaboration among healthcare partners, and support patient registration, consent capture, and lifecycle tracking. The system will ensure seamless collaboration, meet data integrity, security, compliance, and regulatory requirements, and handle high-volume healthcare transactions with scalability, reliability, and high availability.
 
-## System Architecture
+## Technology Stack
 
-For a detailed explanation of the system architecture, please refer to the [System Architecture Documentation](docs/architecture.md).
+- **Language:** Python
+- **Framework:** FastAPI
+- **Database:** PostgreSQL
+- **Authentication:** JWT + OAuth2
+- **AsyncProcessing:** Celery + Redis
+- **Container:** Docker
+- **Cloud:** AWS
+- **IaC:** Terraform
+- **Testing:** Pytest
+- **Documentation:** Sphinx
+- **Source Control:** GitHub
+
+## Architecture
+
+The PHCS adopts a microservices-based architecture, enabling loose coupling, independent scaling, and easier maintenance. This approach allows for flexibility in AI/ML capabilities, enabling the system to adapt and improve over time. The system will be built on cloud infrastructure to leverage the scalability, reliability, and high availability benefits it offers.
+
+For more details about the architecture, components, data models, and interface definitions, please refer to the [Architecture Documentation](./docs/architecture.md).
+
+## Design Philosophy
+
+The PHCS is designed with the following principles in mind:
+
+- **Modularity:** The system is decomposed into microservices, each handling a specific business capability.
+- **Scalability:** The system is designed to scale horizontally, allowing for the addition of more resources to handle increased load.
+- **Security:** The system implements strict access controls, encryption, and authentication mechanisms to ensure data security.
+- **Reliability:** The system is designed to handle failures gracefully, with redundant components and automatic failover mechanisms.
+- **Maintainability:** The system is designed with maintainability in mind, with clear separation of concerns, well-documented components, and a modular architecture.
 
 ## Getting Started
 
-To get started with the project, please follow the instructions in the [Getting Started Guide](docs/getting_started.md).
-
-## Documentation
-
-For detailed documentation on the project, please refer to the [Documentation](docs/).
+To get started with the PHCS, please refer to the [Getting Started Guide](./docs/getting-started.md).
 
 ## Contributing
 
-We welcome contributions to the project. Please refer to the [Contributing Guidelines](CONTRIBUTING.md) for more information.
+Contributions to the PHCS are welcome! Please refer to the [Contributing Guidelines](./docs/contributing.md) for more details.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+The PHCS is licensed under the [MIT License](./LICENSE).
